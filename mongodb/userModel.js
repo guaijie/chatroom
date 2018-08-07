@@ -3,11 +3,13 @@ const crypto=require('crypto');
 
 
 let userSchema=new mongoose.Schema({
+  id:Number,
   username:String,
   password:String,
   phone:String,
   sessionToken:String,
-  registerDate:{type:Date,default:Date.now}
+  registerDate:{type:Date,default:Date.now},
+  isOnline:{type:Boolean,default:false}
 });
 userSchema.methods.crypto=function(cb){
 

@@ -4,7 +4,7 @@
       
       <mu-form ref="form" :model="validateForm" class="form" label-position="top">
         <mu-form-item label="用户名" help-text="必填" prop="username" :rules="usernameRules">
-          <mu-text-field v-model.trim="validateForm.username" prop="username"></mu-text-field>
+          <mu-text-field v-model.trim="validateForm.username" prop="username" text-color="white"></mu-text-field>
         </mu-form-item>
         <mu-form-item label="密码" help-text="必填" prop="password" :rules="passwordRules">
             <mu-text-field type="password" v-model.trim="validateForm.password" prop="password"></mu-text-field>
@@ -40,15 +40,40 @@ export default {
       }
     }
   },
+  mounted(){
+    // this.$store.dispatch('print').then(()=>console.log(1))
+  },
   methods: {
-    submit () {
+    submit(){
+      this.$refs.form.validate().then((result)=>{
+        if(result){
+          this.$fetch('api/user/UserLogin',this.validateForm)
+          .then(({success,userInfo})=>{
+            if(success){
+              let {sessionToken,username,phone}=userInfo;
+              // this.$cookies
+              // .set('sessionToken',sessionToken,'1d')
+              // .set('username',username,'1d')
+              // .set('phone',phone,'1d')
+              this.$store.commit('recordUser',username)
 
-      _fetch('http://localhost:3000/users/UserLogin',this.validateForm)
-      if(this.$refs.form.validate()){
+              this.$store.dispatch('wsCloseAsync',username)
+              .then(()=>{
+                this.$store.dispatch('wsOpenAsync',{username,sessionToken})
+                .then(ws=>{
+                  this.$router.push('/home')
+                })
+              })
+            }
+            else{
 
-      }
+            }
+          })
+          .catch()
+        }
+      })
     },
-    reset () {
+    reset(){
       this.$refs.form.clear();
       this.validateForm = {
         username: '',
@@ -73,6 +98,7 @@ export default {
   }
   .form{
     flex-basis:80%;
+    color:white;
   }
 </style>
 

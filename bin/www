@@ -6,7 +6,11 @@
 
 var app = require('../app');
 var debug = require('debug')('chatroom:server');
-var http = require('http');
+var http = require('http'); 
+const wsRouter=require('../websocket/wsRouter.js');
+// const WebSocketServer=require('ws').Server;
+// const url=require('url');
+
 
 /**
  * Get port from environment and store in Express.
@@ -20,13 +24,22 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+wsRouter(server)
+// const wss=new WebSocketServer({server});
 
-/**
- * Listen on provided port, on all network interfaces.
- */
 
 server.listen(port);
 server.on('error', onError);
+/*server.on('upgrade',(req,socket,head)=>{
+  let urlObj=url.parse(req.url);
+  console.log(head.toString())
+  if(/^\/chat/.test(urlObj.pathname)){
+    
+
+  }else{
+    socket.destory();
+  }
+})*/
 server.on('listening', onListening);
 
 /**
@@ -88,3 +101,6 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+
+// module.exports=expressWs;

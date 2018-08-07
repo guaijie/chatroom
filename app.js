@@ -1,15 +1,14 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-// var multer=require('multer');
-// var bodyParser=require('body-parser');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const multer=require('multer');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const userRouter = require('./routes/userRoutes/user.js');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'chatApp/dist/'));//设定视图的目录
@@ -20,10 +19,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // app.use(multer().any());
 app.use(cookieParser());
-
 /*只允许get和post方法*/
-app.use((req,res,next)=>{
-
+/*app.use((req,res,next)=>{
 
   if(req.method==='GET'||req.method==='POST'){
     next();
@@ -31,11 +28,13 @@ app.use((req,res,next)=>{
     res.status(403).end('错误的请求方法','utf8');
   }
 
-})
+});*/
 
+
+/*路由*/
 app.use(express.static(path.join(__dirname, 'chatApp/dist/')));//设定前端静态资源路径
 app.use('/', indexRouter);//匹配路由路径
-app.use('/users', usersRouter);//匹配路由路径
+app.use('/user', userRouter);//匹配路由路径
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {//捕获404错误
@@ -54,7 +53,7 @@ app.use(function(err, req, res, next) {//错误处理
     res.redirect('/')
   }else{
     console.log(err)
-    res.end("err");
+    res.end(err.status);
     
   }
 });
