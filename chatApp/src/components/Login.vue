@@ -61,7 +61,7 @@ export default {
               .then(()=>{
                 this.$store.dispatch('wsOpenAsync',{username,sessionToken})
                 .then(ws=>{
-                  this.$router.push('/home')
+                  this.$router.push('/')
                 })
               })
             }

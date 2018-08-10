@@ -9,7 +9,8 @@ let userSchema=new mongoose.Schema({
   phone:String,
   sessionToken:String,
   registerDate:{type:Date,default:Date.now},
-  isOnline:{type:Boolean,default:false}
+  isOnline:{type:Boolean,default:false},
+  portrait:{type:String,default:'http://placehold.it/30x30'}
 });
 userSchema.methods.crypto=function(cb){
 

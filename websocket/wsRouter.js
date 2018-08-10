@@ -10,23 +10,6 @@ module.exports=function(server){
 
   const expressWs=require('express-ws')(app,server);
   const wss=expressWs.getWss();
-  wss.on('connection',function(ws,req){
-    
-    ws.on('open',function(){
-      if(ws.readyState===1){
-        let data=JSON.stringify({
-          msg:`${ws.username}已上线`,
-          onlineCounts:wss.clients.size
-        });
-        broadcast(wss,null,data)
-      }
-    })
-    
-  });
-  wss.on('error',error=>{
-    console.log(error)
-  })
-
   /*连接数据库*/
   router.use('/',function(req,res,next){
 
@@ -38,6 +21,39 @@ module.exports=function(server){
       res.status(500)
     })
   })
+
+  wss.on('connection',function(ws,req){
+    
+    ws.on('open',function(username){
+      if(ws.readyState===1){
+        userModel.findOne({username},{_id:0,password:0})
+        .then(userInfo=>{
+          if(userInfo){
+            userInfo.$set('isOnline',true)
+            let data=JSON.stringify({
+              type:'broadcast',
+              userInfo,
+              msg:`${ws.username}已上线`,
+              onlineCounts:wss.clients.size
+            });
+            broadcast(wss,ws,data);
+
+            // userModel.find({username:{$ne:username},isOnline:true},{_id:0,password:0},(err,userInfoList)=>{
+
+            // })
+          }
+        })
+        .catch(err=>{
+          console.log(err)
+        });
+      }
+    })
+    
+  });
+  wss.on('error',error=>{
+    console.log(error)
+  })
+
 
   /*验证用户是否存在*/
   router.use('/',function(req,res,next){
@@ -80,7 +96,6 @@ module.exports=function(server){
     let ws=res.req.ws;
     let clients=wss.clients.values();
     for (client of clients){
-      console.log(client.username===req.query.username)
       if(client.username===req.query.username){
         let data=JSON.stringify({
           success:false,
@@ -99,8 +114,7 @@ module.exports=function(server){
 
   router.ws('/',(ws,req)=>{
     ws.username=req.query.username;
-    // console.log(ws.readyState,ws._socket)
-    ws.emit('open')
+    ws.emit('open',ws.username)
     ws.on('message',data=>{
       console.log(data);
       const msgObj=JSON.parse(data)

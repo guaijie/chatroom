@@ -1,8 +1,8 @@
 ﻿<template>
   
   <div>
-    <SessionList chatType="私聊"  :chatList="chatList" />
-    <SessionList chatType="群聊"  :chatList="chatList" />
+    <SessionList chatType="私聊"  :userList="userList" />
+    <!-- <SessionList chatType="群聊"  :userList="userList" /> -->
   </div>
 
 </template>
@@ -13,42 +13,15 @@
     name:'homeMessage',
     data(){
       return{
-        chatList:[
-          {
-            portrait:'http://placehold.it/30x30',
-            target:'zkw',
-            chatRecord:"Wish I could come, but I'm out of town this weekend.",
-            lastTime:'2017-05-12'
-          },
-          {
-            portrait:'http://placehold.it/30x30',
-            target:'xiong',
-            chatRecord:"Wish I could come, but I'm out of town this weekend.",
-            lastTime:'2017-05-12'
-          },
-          {
-            portrait:'http://placehold.it/30x30',
-            target:'xiaohong',
-            chatRecord:"Wish I could come, but I'm out of town this weekend.",
-            lastTime:'2017-05-12'
-          },
-          {
-            portrait:'http://placehold.it/30x30',
-            target:'Join',
-            chatRecord:"Wish I could come, but I'm out of town this weekend.",
-            lastTime:'2017-05-12'
-          },
-          {
-            portrait:'http://placehold.it/30x30',
-            target:'Join',
-            chatRecord:"Wish I could come, but I'm out of town this weekend.",
-            lastTime:'2017-05-12'
-          }
-
-        ]
+      
       }
     },
-    components:{SessionList}
+    components:{SessionList},
+    computed:{
+      userList(){
+        return this.$store.state.userList
+      }
+    }
 
   }
 </script>

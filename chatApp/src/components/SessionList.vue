@@ -4,15 +4,15 @@
 
     <mu-sub-header>{{chatType}}</mu-sub-header>
 
-    <li v-for="chatItem in chatList" :key="chatItem.id" >
-      <mu-list-item button avatar :ripple="true" tag="div" @click="startChat(chatItem.target)" >
+    <li v-for="chatItem in userList" :key="chatItem.id" >
+      <mu-list-item button avatar :ripple="true" tag="div" @click="startChat(chatItem.username)" >
         <mu-list-item-action>
           <mu-avatar>
             <img :src="chatItem.portrait">
           </mu-avatar>
         </mu-list-item-action>
         <mu-list-item-content>
-          <mu-list-item-title>{{chatItem.target}}</mu-list-item-title>
+          <mu-list-item-title>{{chatItem.username}}</mu-list-item-title>
           <mu-list-item-sub-title>
             {{chatItem.chatRecord}}
           </mu-list-item-sub-title>
@@ -31,7 +31,7 @@
 export default{
   name:'sessionCard',
   props:{
-    chatList:Array,
+    userList:Array,
     chatType:String
   },
   data(){

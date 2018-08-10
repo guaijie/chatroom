@@ -6,7 +6,8 @@ const store=new Vuex.Store({
   state:{
     ws:{},
     chatRecord:{},
-    user:''
+    user:'',
+    userList:[]
   },
   mutations:{
     wsOpen(state,websocket){
@@ -29,6 +30,10 @@ const store=new Vuex.Store({
     // 记录用户信息
     recordUser(state,user){
       state.user=user
+    },
+    recordUserList(state,userList){
+      state.userList=userList
+      console.log(state.userList)
     }
   },
   actions:{
@@ -80,6 +85,21 @@ const store=new Vuex.Store({
 
       }
 
+    },
+
+    fetchUserList(ct,data){
+      let username=ct.state.user;
+      Vue.$fetch('api/user/usersList',{username})
+      .then(res=>{
+        if(res.success){
+          let userList=res.userList;
+          userList.map(user=>{
+            user.lastTime=new Date().toJSON().substr(0,10);
+            user.chatRecord=''
+          })
+          ct.commit('recordUserList',userList)
+        }
+      })
     }
   }
 

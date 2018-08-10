@@ -63,12 +63,18 @@ export default {
     SessionCard:SessionCard
   },
   mounted(){
-    this.$store.dispatch('fetchRecordData')
+    this.$store.dispatch('fetchRecordData');
+    this.$store.dispatch('fetchUserList')
   },
   methods:{
     openDrawer(){
       this.$refs.drawer.toggleDrawer()
     }
+  },
+  computed:{
+    // username(){
+    //   return this.$store.state.user
+    // }
   },
   watch:{
     navItem(n){
