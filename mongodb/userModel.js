@@ -3,7 +3,7 @@ const crypto=require('crypto');
 
 
 let userSchema=new mongoose.Schema({
-  id:Number,
+  chatId:{type:String,default:''},
   username:String,
   password:String,
   phone:String,

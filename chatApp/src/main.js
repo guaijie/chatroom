@@ -9,6 +9,7 @@ import 'muse-ui/dist/muse-ui.css'
 import { carbon, createTheme } from 'muse-ui-carbon-theme';
 import theme from 'muse-ui/lib/theme'
 
+import Toast from 'muse-ui-toast';
 import cookies from 'vue-cookies'
 
 import util from './assets/js/util.js'
@@ -19,6 +20,7 @@ Vue.config.productionTip = false
 Vue.use(MuseUI)
 Vue.use(util)
 Vue.use(cookies)
+Vue.use(Toast);
 
 theme.add('romantic', {
   primary: '#ec407a',

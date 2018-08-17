@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="login">
     <mu-flex justify-content="center" align-items="center" class="flex-wrapper">
       
@@ -11,7 +11,7 @@
         </mu-form-item>
         <mu-flex justify-content="center">
           <mu-form-item>
-            <mu-button small color="primary" @click="submit">确定</mu-button>
+            <mu-button small color="primary" @click="submit">登入</mu-button>
             <mu-button small @click="reset">重置</mu-button>
           </mu-form-item>
         </mu-flex>
@@ -45,10 +45,12 @@ export default {
   },
   methods: {
     submit(){
-      this.$refs.form.validate().then((result)=>{
+
+      /*this.$refs.form.validate().then((result)=>{
         if(result){
           this.$fetch('api/user/UserLogin',this.validateForm)
-          .then(({success,userInfo})=>{
+          .then((res)=>{
+            let {success,userInfo}=res;
             if(success){
               let {sessionToken,username,phone}=userInfo;
               // this.$cookies
@@ -64,14 +66,24 @@ export default {
                   this.$router.push('/')
                 })
               })
-            }
-            else{
-
+            }else{
+              this.$toast.message({
+                message:res.msg,
+                position:'top'
+              });
             }
           })
-          .catch()
+          .catch(()=>{
+            this.$toast.message({
+              message:'服务器响应失败',
+              position:'top'
+            });
+
+          })
         }
-      })
+      })*/
+
+
     },
     reset(){
       this.$refs.form.clear();

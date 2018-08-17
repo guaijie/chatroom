@@ -14,7 +14,7 @@
 
     <div class="chat-record" ref="chatRecord">
 
-      <keep-alive v-for="(chatObj,index) in chatrecordList" :key="index">
+      <keep-alive v-for="(chatObj,index) in chatrecords" :key="index">
           <ChatBubble :msg="chatObj.msg" :right="chatObj.target===target"></ChatBubble>
       </keep-alive>
 
@@ -79,12 +79,12 @@ export default {
     user(){
       return this.$store.state.user
     },
-    chatrecordList(){
-      return this.$store.state.chatRecord[this.target]
+    chatrecords(){
+      return this.$store.state.chatRecords[this.target]
     }
   },
   watch:{
-    chatrecordList(){
+    chatrecords(){
       this.$nextTick(()=>{
         let chatRecord=this.$refs.chatRecord
         chatRecord.scrollTop=chatRecord.scrollHeight

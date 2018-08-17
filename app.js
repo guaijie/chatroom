@@ -2,22 +2,35 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const session=require('express-session');
 const logger = require('morgan');
 const multer=require('multer');
-
+var MongoStore = require('connect-mongo')(session);
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/userRoutes/user.js');
-
 const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'chatApp/dist/'));//设定视图的目录
 app.set('view engine', 'jade');//设定模板引擎
 
+const sessionStore = new MongoStore({
+  url: 'mongodb://localhost:27017/test'
+});
+
 app.use(logger('dev'));
+app.use(session({
+  secret: "chat",
+  resave: true,
+  cookie: {
+    maxAge: 60*60 * 1000
+  },
+  key:'sessionToke',
+  store:sessionStore,
+  saveUninitialized: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(multer().any());
 app.use(cookieParser());
 /*只允许get和post方法*/
 /*app.use((req,res,next)=>{
@@ -32,9 +45,14 @@ app.use(cookieParser());
 
 
 /*路由*/
+app.use('/',(req,res,next)=>{
+  console.log(req.session)
+  next()
+})
 app.use(express.static(path.join(__dirname, 'chatApp/dist/')));//设定前端静态资源路径
 app.use('/', indexRouter);//匹配路由路径
 app.use('/user', userRouter);//匹配路由路径
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {//捕获404错误

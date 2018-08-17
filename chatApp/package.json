@@ -13,6 +13,7 @@
   "dependencies": {
     "muse-ui": "^3.0.0-rc.2",
     "muse-ui-carbon-theme": "^0.1.0",
+    "muse-ui-toast": "^0.3.0",
     "typeface-roboto": "0.0.54",
     "vue": "^2.5.2",
     "vue-cookies": "^1.5.6",

@@ -33,7 +33,6 @@ const store=new Vuex.Store({
     },
     recordUserList(state,userList){
       state.userList=userList
-      console.log(state.userList)
     }
   },
   actions:{
@@ -95,7 +94,7 @@ const store=new Vuex.Store({
           let userList=res.userList;
           userList.map(user=>{
             user.lastTime=new Date().toJSON().substr(0,10);
-            user.chatRecord=''
+            user.chatMsg=''
           })
           ct.commit('recordUserList',userList)
         }
