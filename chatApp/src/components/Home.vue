@@ -63,8 +63,7 @@ export default {
     SessionCard:SessionCard
   },
   mounted(){
-    this.$store.dispatch('fetchRecordData');
-    this.$store.dispatch('fetchUserList')
+    
   },
   methods:{
     openDrawer(){
@@ -72,9 +71,9 @@ export default {
     }
   },
   computed:{
-    // username(){
-    //   return this.$store.state.user
-    // }
+    username(){
+      return this.$store.state.user
+    }
   },
   watch:{
     navItem(n){

@@ -4,8 +4,8 @@ const router = express.Router();
 
 router.all('/',(req,res,next)=>{
 
-  let result={},username=req.query.username;
-  userModel.find({username:{$ne:username}},{registerDate:0,password:0})
+  let result={},_id=req.query._id;
+  userModel.find({_id:{$ne:_id}},{registerDate:0,password:0})
   .then(doc=>{
     console.log(doc)
     result.userList=doc;

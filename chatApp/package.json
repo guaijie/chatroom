@@ -13,7 +13,9 @@
   "dependencies": {
     "muse-ui": "^3.0.0-rc.2",
     "muse-ui-carbon-theme": "^0.1.0",
+    "muse-ui-loading": "^0.2.0",
     "muse-ui-toast": "^0.3.0",
+    "socket.io-client": "^2.1.1",
     "typeface-roboto": "0.0.54",
     "vue": "^2.5.2",
     "vue-cookies": "^1.5.6",

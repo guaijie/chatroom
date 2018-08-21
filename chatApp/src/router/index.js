@@ -15,10 +15,9 @@ const routes=[
     path: '/home',
     component: Home,
     children:[
-      {path:'',component:HomeMessages},
-      {path:'messages',component:HomeMessages},
-      {path:'friends',component:HomeFriends},
-      {path:'groups',component:HomeGroups},
+      {path:'',component:HomeMessages,name:'messages'},
+      {path:'friends',component:HomeFriends,name:'friends'},
+      {path:'groups',component:HomeGroups,name:'groups'},
     ]
   },
   {
@@ -32,7 +31,7 @@ const routes=[
     component:Login
   },
   {
-    path:'/chat/:target',
+    path:'/chat/:target/:username',
     props:true,
     name:'chat',
     component:Chat

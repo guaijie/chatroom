@@ -19,16 +19,16 @@ const sessionStore = new MongoStore({
 });
 
 app.use(logger('dev'));
-app.use(session({
-  secret: "chat",
-  resave: true,
-  cookie: {
-    maxAge: 60*60 * 1000
-  },
-  key:'sessionToke',
-  store:sessionStore,
-  saveUninitialized: true
-}));
+// app.use(session({
+//   secret: "chat",
+//   resave: true,
+//   cookie: {
+//     maxAge: 60*60 * 1000
+//   },
+//   key:'sessionToke',
+//   store:sessionStore,
+//   saveUninitialized: true
+// }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -45,10 +45,6 @@ app.use(cookieParser());
 
 
 /*路由*/
-app.use('/',(req,res,next)=>{
-  console.log(req.session)
-  next()
-})
 app.use(express.static(path.join(__dirname, 'chatApp/dist/')));//设定前端静态资源路径
 app.use('/', indexRouter);//匹配路由路径
 app.use('/user', userRouter);//匹配路由路径

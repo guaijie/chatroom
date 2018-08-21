@@ -4,21 +4,21 @@
 
     <mu-sub-header>{{chatType}}</mu-sub-header>
 
-    <li v-for="chatItem in userList" :key="chatItem.id" >
-      <mu-list-item button avatar :ripple="true" tag="div" @click="startChat(chatItem.username)" >
+    <li v-for="user in userList" :key="user.id" >
+      <mu-list-item button avatar :ripple="true" tag="div" @click="startChat(user._id,user.username)" >
         <mu-list-item-action>
           <mu-avatar>
-            <img :src="chatItem.portrait">
+            <img :src="user.portrait">
           </mu-avatar>
         </mu-list-item-action>
         <mu-list-item-content>
-          <mu-list-item-title>{{chatItem.username}}</mu-list-item-title>
+          <mu-list-item-title>{{user.username}}</mu-list-item-title>
           <mu-list-item-sub-title>
-            {{chatItem.chatRecord}}
+            {{user.chatRecord}}
           </mu-list-item-sub-title>
         </mu-list-item-content>
         <mu-list-item-action style="white-space:nowrap">
-          <mu-list-item-after-text>{{chatItem.lastTime}}</mu-list-item-after-text>
+          <mu-list-item-after-text>{{user.lastTime}}</mu-list-item-after-text>
           <mu-checkbox color="yellow700" value="value1" uncheck-icon="star_border" checked-icon="star"></mu-checkbox>
         </mu-list-item-action>
       </mu-list-item>
@@ -40,9 +40,9 @@ export default{
     }
   },
   methods:{
-    startChat(target){
+    startChat(target,username){
 
-      this.$router.push(`/chat/${target}`)
+      this.$router.push(`/chat/${target}/${username}`)
     }
   }
 

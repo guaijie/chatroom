@@ -24,8 +24,3 @@ userSchema.methods.crypto=function(cb){
 let userModel=mongoose.model('users',userSchema);
 
 module.exports=userModel;
-
-
-
-
-

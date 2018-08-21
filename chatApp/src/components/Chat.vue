@@ -4,7 +4,7 @@
       <mu-button icon slot="left" @click="$router.push('/home')">
         <mu-icon value="chevron_left" size="30" ></mu-icon>
       </mu-button>
-      <div class="title">{{target}}</div>
+      <div class="title">{{username}}</div>
 
       <mu-button flat slot="right">
         <mu-icon :value="iconType"></mu-icon>
@@ -14,8 +14,8 @@
 
     <div class="chat-record" ref="chatRecord">
 
-      <keep-alive v-for="(chatObj,index) in chatrecords" :key="index">
-          <ChatBubble :msg="chatObj.msg" :right="chatObj.target===target"></ChatBubble>
+      <keep-alive v-for="(chatObj,index) in chatRecordList" :key="index">
+          <ChatBubble :msg="chatObj.chatMsg" :right="chatObj.target===target"></ChatBubble>
       </keep-alive>
 
     </div>
@@ -23,7 +23,7 @@
 
     <div class="send mu-send-color">
       <mu-appbar style="width: 100%;" color="primary">
-        <mu-text-field full-width v-model="message" action-icon="star"></mu-text-field>
+        <mu-text-field full-width v-model="message" action-icon="star" @keyup.enter="sendMessage" ></mu-text-field>
         <mu-button flat slot="right" @click="sendMessage">
           <mu-icon value="send"></mu-icon>
         </mu-button>
@@ -48,47 +48,91 @@ export default {
     target:{
       default:null,
       type:String
+    },
+    username:{
+      default:null,
+      type:String
     }
   },
   data(){
     return {
       message:'',
+      isloading:true,
     }
   },
   components:{
     ChatBubble
   },
+  beforeRouteEnter(to,fr,next){
+    console.log(2)
+    next()
+  },
+  beforeRouteUpdate(to,fr,next){
+    console.log(1)
+    next()
+  },
+  beforeRouteLeave(to,fr,next){
+    console.log(3)
+    next()
+  },
   mounted(){
-     
+    if(!this.socket.connected){
+      let sessionToken=this.$cookies.get('sessionToken');
+      let _id=this.$cookies.get('_id')
+      if(sessionToken&&_id){
+        this.$store.dispatch('wsCloseAsync')
+        .then(()=>{
+          this.$store.dispatch('wsOpenAsync',{_id,sessionToken})
+          .then(socket=>{
+            if (!socket) return ;
+            this.$store.dispatch('onSocket');
+            this.$store.dispatch('fetchPrivateChatMsg');
+            this.$store.dispatch('fetchBroadcastMsg');
+            this.$store.dispatch('fetchGroupChatMsg');
+            // this.$store.dispatch('fetchUserList');
+          })
+        })
+      }else{
+        this.$router.push('/login');
+      }
+    }
   },
   methods:{
     sendMessage(){
+      let date=new Date();
+      let lastTime=date.toTimeString().substr(0,8);
+      let lastDate=date.toLocaleDateString().split('/').join('-');
       let data={
-        type:'private',
+        recordId:this.recordId,
         target:this.target,
-        msg:this.message,
-        source:this.user
+        chatMsg:this.message,
+        source:this.userInfo._id,
+        lastTime,
+        lastDate
       };
-      this.$store.dispatch('pushRecordData',data)
+      this.$store.dispatch('pushPrivateChatMsg',data)
+      this.message='';
     }
   },
   computed:{
-    ws(){
-      return this.$store.state.ws
+    socket(){
+      return this.$store.state.socket
     },
-    user(){
-      return this.$store.state.user
+    userInfo(){
+      return this.$store.state.userInfo
     },
-    chatrecords(){
-      return this.$store.state.chatRecords[this.target]
+    chatRecordList(){
+      return this.$store.state.chatRecords[this.recordId]
+    },
+    recordId(){
+      return [this.target,this.userInfo._id].sort().join('-');
     }
   },
   watch:{
-    chatrecords(){
+    chatRecordList(){
+      let chatRecord=this.$refs.chatRecord
       this.$nextTick(()=>{
-        let chatRecord=this.$refs.chatRecord
-        chatRecord.scrollTop=chatRecord.scrollHeight
-
+        chatRecord.scrollTop=chatRecord.scrollHeight;
       })
     }
   }
@@ -108,7 +152,7 @@ export default {
   text-align:center;
 }
 .send{
-  position:fixed;
+  position:relative;
   width:100%;
   left:0;
   bottom:0;

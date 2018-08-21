@@ -12,20 +12,6 @@ module.exports=function(io,app){
   }
 
 
-  io.use((socket,next)=>{
-    console.log(socket.id)
-    if(socket.connected){
-      return next()
-    }
-    return next(new Error(
-      JSON.stringify({
-        reconnect:true,
-        msg:'连接失败，正在尝试重新连接！'
-      })
-    ))
-  })
-
-
   /*连接数据库*/
   io.use((socket,next)=>{
     mongoose.connect('mongodb://localhost:27017/test')
@@ -33,12 +19,7 @@ module.exports=function(io,app){
       return next();
     })
     .catch((err)=>{
-      return next(new Error(
-        JSON.stringify({
-          reconnect:true,
-          msg:'请求异常，正在尝试重新连接！'
-        })
-      ))
+      throw err
     })
 
   })
@@ -77,13 +58,7 @@ module.exports=function(io,app){
       }
     })
     .catch(err=>{
-      disconnect(socket,500)
-      return next(new Error(
-        JSON.stringify({
-          reconnect:true,
-          msg:'请求异常，正在尝试重新连接！'
-        })
-      ))
+      throw err
     })
 
   })
@@ -104,7 +79,8 @@ module.exports=function(io,app){
 
     socket.on('privateChat',(data)=>{
 
-
+      socket.to(data.target).emit('privateChat',data)
+      
 
     })
 
@@ -127,6 +103,9 @@ module.exports=function(io,app){
 
         });
         
+      })
+      .catch(err=>{
+        throw err;
       })
 
     })

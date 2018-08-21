@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="login">
     <mu-flex justify-content="center" align-items="center" class="flex-wrapper">
       
@@ -46,24 +46,29 @@ export default {
   methods: {
     submit(){
 
-      /*this.$refs.form.validate().then((result)=>{
+      this.$refs.form.validate().then((result)=>{
         if(result){
           this.$fetch('api/user/UserLogin',this.validateForm)
           .then((res)=>{
             let {success,userInfo}=res;
             if(success){
-              let {sessionToken,username,phone}=userInfo;
-              // this.$cookies
-              // .set('sessionToken',sessionToken,'1d')
-              // .set('username',username,'1d')
-              // .set('phone',phone,'1d')
-              this.$store.commit('recordUser',username)
-
-              this.$store.dispatch('wsCloseAsync',username)
+              let {sessionToken,_id}=userInfo;
+              this.$cookies
+              .set('sessionToken',sessionToken,'1d')
+              .set('_id',_id,'1d');
+              this.$store.commit('recordUser',userInfo);
+              localStorage.setItem(_id+'userInfo',JSON.stringify(userInfo));
+              this.$store.dispatch('wsCloseAsync')
               .then(()=>{
-                this.$store.dispatch('wsOpenAsync',{username,sessionToken})
-                .then(ws=>{
-                  this.$router.push('/')
+                this.$store.dispatch('wsOpenAsync',{_id,sessionToken})
+                .then(socket=>{
+                  if (!socket) return ;
+                  this.$store.dispatch('onSocket');
+                  this.$store.dispatch('fetchPrivateChatMsg');
+                  this.$store.dispatch('fetchBroadcastMsg');
+                  this.$store.dispatch('fetchGroupChatMsg');
+                  this.$store.dispatch('fetchUserList');
+                  this.$router.push('/');
                 })
               })
             }else{
@@ -81,7 +86,7 @@ export default {
 
           })
         }
-      })*/
+      })
 
 
     },

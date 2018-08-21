@@ -27,7 +27,7 @@ router.use('/',(req,res,next)=>{
 
 /*用户登入*/
 router.all('/',(req,res,next)=>{
-  let Conditions={_id:0,username:1,password:1,sessionToken:1,phone:1};
+  let Conditions={registerDate:0};
   userModel.findOne({username:req.user.username},Conditions)
   .then((doc)=>{
     if(doc){
