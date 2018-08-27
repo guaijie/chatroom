@@ -58,19 +58,18 @@ export default {
               .set('_id',_id,'1d');
               this.$store.commit('recordUser',userInfo);
               localStorage.setItem(_id+'userInfo',JSON.stringify(userInfo));
-              this.$store.dispatch('wsCloseAsync')
-              .then(()=>{
-                this.$store.dispatch('wsOpenAsync',{_id,sessionToken})
-                .then(socket=>{
-                  if (!socket) return ;
-                  this.$store.dispatch('onSocket');
-                  this.$store.dispatch('fetchPrivateChatMsg');
-                  this.$store.dispatch('fetchBroadcastMsg');
-                  this.$store.dispatch('fetchGroupChatMsg');
-                  this.$store.dispatch('fetchUserList');
-                  this.$router.push('/');
-                })
+              
+              this.$store.dispatch('wsOpenAsync',{_id,sessionToken})
+              .then(socket=>{
+                if (!socket) return ;
+                this.$store.dispatch('onSocket');
+                this.$store.dispatch('fetchPrivateChatMsg');
+                this.$store.dispatch('fetchBroadcastMsg');
+                this.$store.dispatch('fetchGroupChatMsg');
+                this.$store.dispatch('fetchUserList');
+                this.$router.push('/');
               })
+
             }else{
               this.$toast.message({
                 message:res.msg,

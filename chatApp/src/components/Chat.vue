@@ -63,19 +63,9 @@ export default {
   components:{
     ChatBubble
   },
-  beforeRouteEnter(to,fr,next){
-    console.log(2)
-    next()
-  },
-  beforeRouteUpdate(to,fr,next){
-    console.log(1)
-    next()
-  },
-  beforeRouteLeave(to,fr,next){
-    console.log(3)
-    next()
-  },
   mounted(){
+    let chatRecord=this.$refs.chatRecord
+    chatRecord.scrollTop=chatRecord.scrollHeight;
     if(!this.socket.connected){
       let sessionToken=this.$cookies.get('sessionToken');
       let _id=this.$cookies.get('_id')
@@ -101,15 +91,20 @@ export default {
     sendMessage(){
       let date=new Date();
       let lastTime=date.toTimeString().substr(0,8);
+      let chatMsg=this.message;
+      let target=this.target;
+      let source=this.userInfo._id;
+      let recordId=this.recordId;
       let lastDate=date.toLocaleDateString().split('/').join('-');
       let data={
-        recordId:this.recordId,
-        target:this.target,
-        chatMsg:this.message,
-        source:this.userInfo._id,
+        recordId,
+        target,
+        chatMsg,
+        source,
         lastTime,
         lastDate
       };
+      this.$store.commit('addLastMsg',{recordId,lastTime,chatMsg})
       this.$store.dispatch('pushPrivateChatMsg',data)
       this.message='';
     }

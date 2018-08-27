@@ -8,7 +8,7 @@ const store=new Vuex.Store({
     socket:{},
     chatRecords:{},
     userInfo:{},
-    userList:[]
+    userList:{}
   },
   mutations:{
     wsOpen(state,socket){
@@ -20,7 +20,6 @@ const store=new Vuex.Store({
         Vue.set(state.chatRecords,recordId,[])
       }
       state.chatRecords[recordId].push(data)
-      // console.log(state.chatRecords)
     },
     // 记录用户信息
     recordUser(state,userInfo){
@@ -33,6 +32,12 @@ const store=new Vuex.Store({
     /*获取本地聊天记录*/
     getchatRecords(state,chatRecords){
       state.chatRecords=chatRecords;
+    },
+    addLastMsg(state,{recordId,lastTime,chatMsg}){
+      if(state.userList[recordId]){
+        state.userList[recordId].lastTime=lastTime;
+        state.userList[recordId].chatMsg=chatMsg;
+      }
     }
   },
   actions:{
@@ -112,13 +117,16 @@ const store=new Vuex.Store({
     fetchPrivateChatMsg(ct){
       ct.state.socket.on('privateChat',(data)=>{
         let recordId=data.recordId;
+        let {lastTime,chatMsg}=data;
         ct.commit('chatPush',{recordId,data})
+        ct.commit('addLastMsg',{recordId,lastTime,chatMsg})
       })
     },
     // 异步获取广播信息
     fetchBroadcastMsg(ct){
       ct.state.socket.on('broadcast',(data)=>{
         console.log(data)
+        console.log('broadcast')
       })
     },
     // 异步获取群聊信息
@@ -153,10 +161,22 @@ const store=new Vuex.Store({
     },
     fetchUserList(ct){
       let _id=ct.state.userInfo._id;
+      let chatRecords=JSON.parse(localStorage.getItem(_id+'chatRecords'));
       Vue.$fetch('/api/user/usersList',{_id})
       .then(res=>{
         if(res.success){
-          let userList=res.userList;
+          let userList={};
+          res.userList.map((val,index)=>{
+            let recordId=[_id,val._id].sort().join('-');
+            if(chatRecords&&chatRecords[recordId]){
+              var {lastTime,chatMsg}=chatRecords[recordId].slice(-1)[0]
+            }else{
+              var lastTime=null,chatMsg=null;
+            }
+            userList[recordId]=val;
+            userList[recordId].lastTime=lastTime;
+            userList[recordId].chatMsg=chatMsg;
+          });
           ct.commit('recordUserList',userList)
         }
       })

@@ -84,7 +84,8 @@ module.exports=function(io,app){
 
     })
 
-    socket.on('disconnect',(reason)=>{
+    socket.once('disconnect',(reason)=>{
+      console.log('disconnect')
       let {sessionToken,_id}=socket.handshake.query;
       userModel.findOne({sessionToken,_id},{password:0,registerDate:0}).
       then(doc=>{

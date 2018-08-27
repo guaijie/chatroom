@@ -67,10 +67,10 @@ theme.add('carbon', carbon)
 
 // theme.use('dark')
 let router=createRouter();
-let sessionToken=cookies.get('sessionToken');
-let _id=cookies.get('_id');
 
 router.beforeEach((to,fr,next)=>{
+  let sessionToken=cookies.get('sessionToken');
+  let _id=cookies.get('_id');
   if(to.name==='login'||to.name==='signup'){
     next()
   }
@@ -78,22 +78,21 @@ router.beforeEach((to,fr,next)=>{
     next()
   }else{
     if(sessionToken&&_id){
-      console.log('beforeEach')
       let userInfo=JSON.parse(localStorage.getItem(_id+'userInfo'));
       if(userInfo){
         store.commit('recordUser',userInfo);
-        store.dispatch('wsCloseAsync')
-        .then(()=>{
-          store.dispatch('wsOpenAsync',{_id,sessionToken})
-          .then(socket=>{
-            if (!socket) return ;
-            store.dispatch('onSocket');
-            store.dispatch('fetchPrivateChatMsg');
-            store.dispatch('fetchBroadcastMsg');
-            store.dispatch('fetchGroupChatMsg');
-            store.dispatch('fetchUserList');
-          })
+
+        store.dispatch('wsOpenAsync',{_id,sessionToken})
+        .then(socket=>{
+          console.log('beforeEach')
+          if (!socket) return ;
+          store.dispatch('onSocket');
+          store.dispatch('fetchPrivateChatMsg');
+          store.dispatch('fetchBroadcastMsg');
+          store.dispatch('fetchGroupChatMsg');
+          store.dispatch('fetchUserList');
         })
+
       }else{
         router.push('/login');
       }
@@ -113,6 +112,7 @@ new Vue({
     
   },
   mounted(){
+    let _id=this._id
     let chatRecords=localStorage.getItem(_id+'chatRecords');
     if(!chatRecords ) chatRecords={};
     else{
@@ -125,11 +125,14 @@ new Vue({
   computed:{
     chatRecords(){
       return this.$store.state.chatRecords;
+    },
+    _id(){
+      return this.$store.state.userInfo._id;
     }
   },
   watch:{
     chatRecords:{
-      handler:function(){localStorage.setItem(_id+'chatRecords',JSON.stringify(this.chatRecords))},
+      handler:function(){localStorage.setItem(this._id+'chatRecords',JSON.stringify(this.chatRecords))},
       deep:true
     }
   },
